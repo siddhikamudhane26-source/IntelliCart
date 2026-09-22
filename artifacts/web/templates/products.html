@@ -1,24 +1,355 @@
 {% extends "base.html" %}
+
 {% block title %}Products | IntelliCart{% endblock %}
+
 {% block content %}
+
 <section class="page-hero">
-  <div class="container page-hero-inner"><div><p class="eyebrow">The IntelliCart collection</p><h1>Products that fit <em>your world.</em></h1><p>Explore considered picks across categories, filtered by the signals that matter to you.</p></div><div class="page-hero-stat"><strong>{{ products|length }}</strong><span>products found</span></div></div>
-</section>
-<section class="section container products-layout">
-  <aside class="filter-panel">
-    <div class="filter-heading"><span>Refine</span><i class="bi bi-sliders2"></i></div>
-    <form method="get" action="{{ url_for('products') }}">
-      <label class="search-field"><i class="bi bi-search"></i><input type="search" name="search" value="{{ filters.search }}" placeholder="Search products..." /></label>
-      <div class="filter-group"><label>Category</label><select name="category"><option value="">All categories</option>{% for category in categories %}<option value="{{ category['id'] }}" {{ 'selected' if filters.category == category['id'] }}>{{ category['name'] }}</option>{% endfor %}</select></div>
-      <div class="filter-group"><label>Minimum rating</label><select name="rating"><option value="">Any rating</option><option value="4.5" {{ 'selected' if filters.rating == 4.5 }}>4.5+ stars</option><option value="4" {{ 'selected' if filters.rating == 4 }}>4+ stars</option><option value="3" {{ 'selected' if filters.rating == 3 }}>3+ stars</option></select></div>
-      <div class="filter-group"><label>Price up to</label><select name="max_price"><option value="">Any price</option><option value="3000" {{ 'selected' if filters.max_price == 3000 }}>₹3,000</option><option value="8000" {{ 'selected' if filters.max_price == 8000 }}>₹8,000</option><option value="15000" {{ 'selected' if filters.max_price == 15000 }}>₹15,000</option><option value="30000" {{ 'selected' if filters.max_price == 30000 }}>₹30,000</option></select></div>
-      <button class="button button-primary button-full" type="submit">Apply filters <i class="bi bi-arrow-right"></i></button>
-      <a class="clear-filters" href="{{ url_for('products') }}">Clear all</a>
-    </form>
-  </aside>
-  <div class="products-content">
-    <div class="results-toolbar"><span>Showing <strong>{{ products|length }}</strong> thoughtfully selected items</span><form method="get"><input type="hidden" name="search" value="{{ filters.search }}" /><input type="hidden" name="category" value="{{ filters.category or '' }}" /><label class="sort-select"><i class="bi bi-sort-down"></i><select name="sort" onchange="this.form.submit()"><option value="popular" {{ 'selected' if filters.sort == 'popular' }}>Most popular</option><option value="rating" {{ 'selected' if filters.sort == 'rating' }}>Top rated</option><option value="price_low" {{ 'selected' if filters.sort == 'price_low' }}>Price: low to high</option><option value="price_high" {{ 'selected' if filters.sort == 'price_high' }}>Price: high to low</option></select></label></form></div>
-    {% if products %}<div class="product-grid product-grid-wide">{% for product in products %}{% include "_product_card.html" %}{% endfor %}</div>{% else %}<div class="empty-state"><i class="bi bi-search"></i><h2>No products matched that search.</h2><p>Try a broader category or clear your filters.</p><a class="button button-primary" href="{{ url_for('products') }}">Browse everything</a></div>{% endif %}
+  <div class="container page-hero-inner">
+    <div>
+      <p class="eyebrow">The IntelliCart collection</p>
+
+      <h1>
+        Products that fit <em>your world.</em>
+      </h1>
+
+      <p>
+        Explore considered picks across categories, filtered by the signals
+        that matter to you.
+      </p>
+    </div>
+
+    <div class="page-hero-stat">
+      <strong>{{ products|length }}</strong>
+      <span>products found</span>
+    </div>
   </div>
 </section>
+
+
+<section class="section container products-layout">
+
+  <!-- FILTER PANEL -->
+  <aside class="filter-panel">
+
+    <div class="filter-heading">
+      <span>Refine</span>
+      <i class="bi bi-sliders2"></i>
+    </div>
+
+    <form method="get" action="{{ url_for('products') }}">
+
+      <!-- SEARCH -->
+      <label class="search-field">
+        <i class="bi bi-search"></i>
+
+        <input
+          type="search"
+          name="search"
+          value="{{ filters.search }}"
+          placeholder="Search products..."
+        />
+      </label>
+
+
+      <!-- CATEGORY -->
+      <div class="filter-group">
+
+        <label>Category</label>
+
+        <select name="category">
+
+          <option value="">
+            All categories
+          </option>
+
+          {% for category in categories %}
+
+          <option
+            value="{{ category['id'] }}"
+            {% if filters.category == category['id'] %}
+              selected
+            {% endif %}
+          >
+            {{ category['name'] }}
+          </option>
+
+          {% endfor %}
+
+        </select>
+
+      </div>
+
+
+      <!-- RATING -->
+      <div class="filter-group">
+
+        <label>Minimum rating</label>
+
+        <select name="rating">
+
+          <option value="">
+            Any rating
+          </option>
+
+          <option
+            value="4.5"
+            {% if filters.rating == 4.5 %}
+              selected
+            {% endif %}
+          >
+            4.5+ stars
+          </option>
+
+          <option
+            value="4"
+            {% if filters.rating == 4 %}
+              selected
+            {% endif %}
+          >
+            4+ stars
+          </option>
+
+          <option
+            value="3"
+            {% if filters.rating == 3 %}
+              selected
+            {% endif %}
+          >
+            3+ stars
+          </option>
+
+        </select>
+
+      </div>
+
+
+      <!-- PRICE -->
+      <div class="filter-group">
+
+        <label>Price up to</label>
+
+        <select name="max_price">
+
+          <option value="">
+            Any price
+          </option>
+
+          <option
+            value="3000"
+            {% if filters.max_price == 3000 %}
+              selected
+            {% endif %}
+          >
+            ₹3,000
+          </option>
+
+          <option
+            value="8000"
+            {% if filters.max_price == 8000 %}
+              selected
+            {% endif %}
+          >
+            ₹8,000
+          </option>
+
+          <option
+            value="15000"
+            {% if filters.max_price == 15000 %}
+              selected
+            {% endif %}
+          >
+            ₹15,000
+          </option>
+
+          <option
+            value="30000"
+            {% if filters.max_price == 30000 %}
+              selected
+            {% endif %}
+          >
+            ₹30,000
+          </option>
+
+        </select>
+
+      </div>
+
+
+      <!-- APPLY -->
+      <button
+        class="button button-primary button-full"
+        type="submit"
+      >
+        Apply filters
+        <i class="bi bi-arrow-right"></i>
+      </button>
+
+
+      <!-- CLEAR -->
+      <a
+        class="clear-filters"
+        href="{{ url_for('products') }}"
+      >
+        Clear all
+      </a>
+
+    </form>
+
+  </aside>
+
+
+  <!-- PRODUCTS -->
+  <div class="products-content">
+
+    <!-- RESULTS + SORT -->
+    <div class="results-toolbar">
+
+      <span>
+        Showing
+        <strong>{{ products|length }}</strong>
+        thoughtfully selected items
+      </span>
+
+
+      <!-- SORT FORM -->
+      <form
+        method="get"
+        action="{{ url_for('products') }}"
+      >
+
+        <!-- KEEP SEARCH -->
+        <input
+          type="hidden"
+          name="search"
+          value="{{ filters.search }}"
+        />
+
+
+        <!-- KEEP CATEGORY -->
+        <input
+          type="hidden"
+          name="category"
+          value="{{ filters.category or '' }}"
+        />
+
+
+        <!-- KEEP RATING -->
+        <input
+          type="hidden"
+          name="rating"
+          value="{{ filters.rating or '' }}"
+        />
+
+
+        <!-- KEEP PRICE -->
+        <input
+          type="hidden"
+          name="max_price"
+          value="{{ filters.max_price or '' }}"
+        />
+
+
+        <!-- SORT -->
+        <label class="sort-select">
+
+          <i class="bi bi-sort-down"></i>
+
+          <select
+            name="sort"
+            onchange="this.form.submit()"
+          >
+
+            <option
+              value="popular"
+              {% if filters.sort == 'popular' %}
+                selected
+              {% endif %}
+            >
+              Most popular
+            </option>
+
+
+            <option
+              value="rating"
+              {% if filters.sort == 'rating' %}
+                selected
+              {% endif %}
+            >
+              Top rated
+            </option>
+
+
+            <option
+              value="price_low"
+              {% if filters.sort == 'price_low' %}
+                selected
+              {% endif %}
+            >
+              Price: low to high
+            </option>
+
+
+            <option
+              value="price_high"
+              {% if filters.sort == 'price_high' %}
+                selected
+              {% endif %}
+            >
+              Price: high to low
+            </option>
+
+          </select>
+
+        </label>
+
+      </form>
+
+    </div>
+
+
+    <!-- PRODUCT RESULTS -->
+    {% if products %}
+
+      <div class="product-grid product-grid-wide">
+
+        {% for product in products %}
+
+          {% include "_product_card.html" %}
+
+        {% endfor %}
+
+      </div>
+
+
+    {% else %}
+
+      <!-- NO RESULTS -->
+      <div class="empty-state">
+
+        <i class="bi bi-search"></i>
+
+        <h2>
+          No products matched that search.
+        </h2>
+
+        <p>
+          Try a broader category or clear your filters.
+        </p>
+
+        <a
+          class="button button-primary"
+          href="{{ url_for('products') }}"
+        >
+          Browse everything
+        </a>
+
+      </div>
+
+    {% endif %}
+
+  </div>
+
+</section>
+
 {% endblock %}
