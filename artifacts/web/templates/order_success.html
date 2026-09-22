@@ -1,0 +1,5 @@
+{% extends "base.html" %}
+{% block title %}Order confirmed | IntelliCart{% endblock %}
+{% block content %}
+<section class="success-page"><div class="success-confetti"></div><div class="success-icon"><i class="bi bi-check2"></i></div><p class="eyebrow">Order confirmed</p><h1>It’s on its <em>way.</em></h1><p class="success-lede">Thanks for shopping with IntelliCart. We’ll keep you posted as your order moves.</p><div class="success-order"><span>Order ID</span><strong>#IC-{{ "%04d"|format(order['id']) }}</strong><span>Total</span><strong>₹{{ "{:,.0f}".format(order['total_amount']) }}</strong></div><div class="hero-actions"><a class="button button-primary" href="{{ url_for('orders') }}">View order history <i class="bi bi-arrow-up-right"></i></a><a class="button button-outline" href="{{ url_for('products') }}">Keep exploring</a></div></section>
+{% endblock %}

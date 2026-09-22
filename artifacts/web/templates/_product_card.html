@@ -1,0 +1,12 @@
+<article class="product-card">
+  <a class="product-image-wrap" href="{{ url_for('product_detail', product_id=product['id']) }}">
+    {% if product['original_price'] > product['price'] %}<span class="product-badge">-{{ ((1 - product['price'] / product['original_price']) * 100)|round|int }}%</span>{% endif %}
+    <img src="{{ product['image_url'] }}" alt="{{ product['name'] }}" loading="lazy" />
+    <span class="quick-view">View details <i class="bi bi-arrow-up-right"></i></span>
+  </a>
+  <div class="product-info">
+    <div class="product-meta"><span>{{ product['category_name'] }}</span><span><i class="bi bi-star-fill"></i> {{ product['rating'] }}</span></div>
+    <h3><a href="{{ url_for('product_detail', product_id=product['id']) }}">{{ product['name'] }}</a></h3>
+    <div class="product-buy-row"><div><strong>₹{{ "{:,.0f}".format(product['price']) }}</strong>{% if product['original_price'] > product['price'] %}<del>₹{{ "{:,.0f}".format(product['original_price']) }}</del>{% endif %}</div><form method="post" action="{{ url_for('add_to_cart', product_id=product['id']) }}"><button class="add-button" type="submit" aria-label="Add {{ product['name'] }} to cart"><i class="bi bi-plus"></i></button></form></div>
+  </div>
+</article>

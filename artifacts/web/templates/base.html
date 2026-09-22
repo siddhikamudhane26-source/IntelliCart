@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="IntelliCart — smarter shopping, personalized for you." />
+    <title>{% block title %}IntelliCart{% endblock %}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+    <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='favicon.svg') }}" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+    {% block head %}{% endblock %}
+  </head>
+  <body>
+    <div class="site-glow"></div>
+    <header class="site-header">
+      <div class="container nav-wrap">
+        <a class="brand" href="{{ url_for('home') }}">
+          <span class="brand-mark">I</span>
+          <span class="brand-copy">Intelli<span>Cart</span><small>SMARTER COMMERCE</small></span>
+        </a>
+        <button class="mobile-menu-toggle" type="button" aria-label="Open navigation" data-menu-toggle>
+          <i class="bi bi-list"></i>
+        </button>
+        <nav class="main-nav" data-menu>
+          <a class="{{ 'active' if current_path == '/' }}" href="{{ url_for('home') }}">Home</a>
+          <a class="{{ 'active' if current_path.startswith('/products') }}" href="{{ url_for('products') }}">Products</a>
+          <a class="{{ 'active' if current_path.startswith('/recommendations') }}" href="{{ url_for('recommendations') }}">For you</a>
+          {% if current_user and current_user['role'] == 'admin' %}
+            <a class="{{ 'active' if current_path.startswith('/admin') }}" href="{{ url_for('admin') }}">Analytics</a>
+          {% endif %}
+        </nav>
+        <div class="nav-actions">
+          <a class="icon-link" href="{{ url_for('cart') }}" aria-label="Shopping cart">
+            <i class="bi bi-bag"></i><span class="cart-count">{{ cart_count }}</span>
+          </a>
+          {% if current_user %}
+            <a class="user-chip" href="{{ url_for('profile') }}">
+              <span class="avatar">{{ current_user['name'][0] }}</span>
+              <span class="user-name">{{ current_user['name'].split()[0] }}</span>
+            </a>
+          {% else %}
+            <a class="nav-login" href="{{ url_for('login') }}">Sign in <i class="bi bi-arrow-up-right"></i></a>
+          {% endif %}
+        </div>
+      </div>
+    </header>
+
+    <main>
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          <div class="container flash-stack">
+            {% for category, message in messages %}
+              <div class="flash flash-{{ category }}"><i class="bi bi-{{ 'check-circle' if category == 'success' else 'info-circle' if category == 'info' else 'exclamation-triangle' }}"></i>{{ message }}<button type="button" data-dismiss-flash>&times;</button></div>
+            {% endfor %}
+          </div>
+        {% endif %}
+      {% endwith %}
+      {% block content %}{% endblock %}
+    </main>
+
+    <footer class="site-footer">
+      <div class="container footer-grid">
+        <div>
+          <a class="brand" href="{{ url_for('home') }}">
+            <span class="brand-mark">I</span>
+            <span class="brand-copy">Intelli<span>Cart</span><small>SMARTER COMMERCE</small></span>
+          </a>
+          <p class="footer-note">Smarter Shopping. Personalized for You.</p>
+        </div>
+        <div class="footer-links">
+          <div><strong>Discover</strong><a href="{{ url_for('products') }}">All products</a><a href="{{ url_for('recommendations') }}">AI recommendations</a></div>
+          <div><strong>Account</strong><a href="{{ url_for('orders') }}">Order history</a><a href="{{ url_for('profile') }}">Customer profile</a></div>
+          <div><strong>IntelliCart</strong><a href="{{ url_for('home') }}#why">Why IntelliCart?</a><a href="{{ url_for('health_check') }}">System status</a></div>
+        </div>
+      </div>
+      <div class="container footer-bottom"><span>© 2026 IntelliCart</span><span>Built for better decisions.</span></div>
+    </footer>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+    {% block scripts %}{% endblock %}
+  </body>
+</html>

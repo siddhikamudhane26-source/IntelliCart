@@ -1,0 +1,6 @@
+{% extends "base.html" %}
+{% block title %}Order History | IntelliCart{% endblock %}
+{% block content %}
+<section class="page-hero compact"><div class="container page-hero-inner"><div><p class="eyebrow">Your journey with us</p><h1>Order <em>history.</em></h1><p>Every good find, all in one place.</p></div><div class="page-hero-icon"><i class="bi bi-clock-history"></i></div></div></section>
+<section class="section container">{% if orders %}<div class="orders-table"><div class="orders-table-head"><span>Order</span><span>Date</span><span>Items</span><span>Total</span><span>Status</span></div>{% for order in orders %}<article class="order-row"><strong>#IC-{{ "%04d"|format(order['id']) }}</strong><span>{{ order['created_at'][:10] }}</span><span class="order-products">{{ order['products'] }}</span><strong>₹{{ "{:,.0f}".format(order['total_amount']) }}</strong><span class="status-badge status-{{ order['status'] }}">{{ order['status'] }}</span></article>{% endfor %}</div>{% else %}<div class="empty-state"><i class="bi bi-receipt"></i><h2>No orders yet.</h2><p>Your next great find is just a few clicks away.</p><a class="button button-primary" href="{{ url_for('products') }}">Browse products</a></div>{% endif %}</section>
+{% endblock %}

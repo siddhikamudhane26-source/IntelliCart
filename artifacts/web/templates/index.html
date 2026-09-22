@@ -1,89 +1,77 @@
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta
-      name="description"
-      content="IntelliCart — an intelligent e-commerce recommendation and customer analytics system."
-    />
-    <title>IntelliCart | Intelligent Commerce</title>
-    <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='favicon.svg') }}" />
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
-  </head>
-  <body>
-    <main class="page-shell">
-      <nav class="topbar" aria-label="Main navigation">
-        <a class="brand" href="/">
-          <span class="brand-mark" aria-hidden="true">I</span>
-          <span>IntelliCart</span>
-        </a>
-        <span class="status-pill">
-          <span class="status-dot" aria-hidden="true"></span>
-          Starter dashboard
-        </span>
-      </nav>
-
-      <section class="hero" aria-labelledby="page-title">
-        <div class="hero-copy">
-          <p class="eyebrow">Intelligent commerce, ready to grow</p>
-          <h1 id="page-title">Make every customer interaction more relevant.</h1>
-          <p class="hero-text">
-            IntelliCart is the foundation for personalized product recommendations
-            and clearer customer insights. This starter app is ready for the next
-            layer of intelligence.
-          </p>
-          <a class="primary-button" href="#next-steps">
-            Explore the foundation
-            <span aria-hidden="true">→</span>
-          </a>
+{% extends "base.html" %}
+{% block title %}IntelliCart | Smarter Shopping{% endblock %}
+{% block content %}
+<section class="hero-section">
+  <div class="container hero-grid">
+    <div class="hero-copy reveal">
+      <p class="eyebrow"><span class="eyebrow-line"></span> Intelligent commerce platform</p>
+      <h1>Smart shopping starts <em>here.</em></h1>
+      <p class="hero-lede">Discover products personalized for you using intelligent recommendations and customer analytics.</p>
+      <div class="hero-actions">
+        <a class="button button-primary" href="{{ url_for('products') }}">Explore products <i class="bi bi-arrow-up-right"></i></a>
+        <a class="button button-ghost" href="{{ url_for('recommendations') }}"><i class="bi bi-stars"></i> Get personalized picks</a>
+      </div>
+      <div class="hero-proof"><span class="proof-avatars"><i>R</i><i>S</i><i>A</i><i>+</i></span><span>Trusted by <b>5,000+</b> curious shoppers</span></div>
+    </div>
+    <div class="hero-visual reveal reveal-delay">
+      <div class="hero-orb orb-one"></div><div class="hero-orb orb-two"></div>
+      <div class="floating-card floating-card-main">
+        <div class="floating-label"><span class="pulse-dot"></span> Curated for you</div>
+        <div class="mini-product">
+          <img src="https://images.unsplash.com/photo-1546435770-a3e426bf472b?w=500&q=80" alt="Premium headphones" />
+          <div><strong>Studio Headphones</strong><small>Because you like focus</small><b>₹8,499</b></div>
         </div>
+        <div class="match-row"><span>92% match</span><div class="match-bar"><i style="width:92%"></i></div><i class="bi bi-heart"></i></div>
+      </div>
+      <div class="floating-card floating-card-small card-top"><span class="small-icon"><i class="bi bi-graph-up-arrow"></i></span><div><small>Smart signals</small><strong>+24.8%</strong></div></div>
+      <div class="floating-card floating-card-small card-bottom"><div class="signal-ring"><i class="bi bi-stars"></i></div><div><small>AI insight</small><strong>Made for you</strong></div></div>
+      <div class="visual-grid"></div>
+    </div>
+  </div>
+</section>
 
-        <div class="signal-card" aria-label="System overview">
-          <div class="signal-card-header">
-            <span class="card-label">System overview</span>
-            <span class="live-label"><span></span> Online</span>
-          </div>
-          <div class="signal-visual" aria-hidden="true">
-            <div class="signal-line signal-line-one"></div>
-            <div class="signal-line signal-line-two"></div>
-            <div class="signal-line signal-line-three"></div>
-            <div class="signal-node node-one"></div>
-            <div class="signal-node node-two"></div>
-            <div class="signal-node node-three"></div>
-            <div class="signal-node node-four"></div>
-          </div>
-          <div class="signal-card-footer">
-            <span>Recommendation engine</span>
-            <strong>Ready for data</strong>
-          </div>
-        </div>
-      </section>
+<section class="stats-strip">
+  <div class="container stats-grid">
+    <div><strong data-count="{{ stats.products }}">10K+</strong><span>Curated products</span></div>
+    <div><strong data-count="{{ stats.customers }}">5K+</strong><span>Happy customers</span></div>
+    <div><strong data-count="{{ stats.orders }}">15K+</strong><span>Orders delivered</span></div>
+    <div><strong data-count="{{ stats.satisfaction }}">98%</strong><span>Customer satisfaction</span></div>
+  </div>
+</section>
 
-      <section class="feature-grid" id="next-steps" aria-label="Platform areas">
-        <article class="feature-card">
-          <span class="feature-number">01</span>
-          <h2>Personalized discovery</h2>
-          <p>Build a smarter path from customer intent to the products they want.</p>
-        </article>
-        <article class="feature-card feature-card-accent">
-          <span class="feature-number">02</span>
-          <h2>Customer intelligence</h2>
-          <p>Turn shopping behavior into useful signals for better decisions.</p>
-        </article>
-        <article class="feature-card">
-          <span class="feature-number">03</span>
-          <h2>Simple foundation</h2>
-          <p>Start small with a clean Flask app that is easy to extend.</p>
-        </article>
-      </section>
+<section class="section container">
+  <div class="section-heading"><div><p class="eyebrow">Browse by interest</p><h2>Find your next <em>favorite.</em></h2></div><a class="text-link" href="{{ url_for('products') }}">View all categories <i class="bi bi-arrow-up-right"></i></a></div>
+  <div class="category-grid">
+    {% for category in categories[:5] %}
+      <a class="category-card category-{{ loop.index }}" href="{{ url_for('products', category=category['id']) }}">
+        <div class="category-number">0{{ loop.index }}</div><h3>{{ category['name'] }}</h3><span>{{ category['product_count'] }} picks <i class="bi bi-arrow-up-right"></i></span>
+      </a>
+    {% endfor %}
+  </div>
+</section>
 
-      <footer class="footer">
-        <span>IntelliCart</span>
-        <span>Initial Flask application</span>
-      </footer>
-    </main>
+<section class="section section-tinted">
+  <div class="container">
+    <div class="section-heading"><div><p class="eyebrow">Popular right now</p><h2>Trending <em>picks.</em></h2></div><a class="text-link" href="{{ url_for('products', sort='popular') }}">See what's moving <i class="bi bi-arrow-up-right"></i></a></div>
+    <div class="product-grid">
+      {% for product in trending %}
+        {% include "_product_card.html" %}
+      {% endfor %}
+    </div>
+  </div>
+</section>
 
-    <script src="{{ url_for('static', filename='script.js') }}"></script>
-  </body>
-</html>
+<section class="section container" id="why">
+  <div class="section-heading"><div><p class="eyebrow">Why IntelliCart?</p><h2>Commerce with a <em>signal.</em></h2></div><p class="section-intro">Less scrolling. Better choices. A smarter way to discover what fits your life.</p></div>
+  <div class="why-grid">
+    <article class="why-card"><span class="why-icon"><i class="bi bi-stars"></i></span><h3>AI-powered recommendations</h3><p>Content-based matching learns what makes a product relevant, then surfaces it at the right moment.</p><span class="why-index">01</span></article>
+    <article class="why-card why-card-dark"><span class="why-icon"><i class="bi bi-bar-chart-line"></i></span><h3>Smart customer analytics</h3><p>Understand customer intent and behavior with transparent signals you can actually act on.</p><span class="why-index">02</span></article>
+    <article class="why-card"><span class="why-icon"><i class="bi bi-person-heart"></i></span><h3>Personalized shopping</h3><p>Every interaction becomes a little more useful, from the first view to the final order.</p><span class="why-index">03</span></article>
+    <article class="why-card why-card-accent"><span class="why-icon"><i class="bi bi-shield-check"></i></span><h3>Secure ordering</h3><p>Clear checkout, reliable payment states, and order history that keeps customers informed.</p><span class="why-index">04</span></article>
+  </div>
+</section>
+
+<section class="recommendation-banner">
+  <div class="container recommendation-banner-inner"><div><p class="eyebrow">Your next great find</p><h2>Let the data do the <em>discovering.</em></h2><p>Sign in to unlock product recommendations shaped by your shopping behavior.</p></div><a class="button button-light" href="{{ url_for('recommendations') }}">Meet your picks <i class="bi bi-arrow-up-right"></i></a></div>
+</section>
+{% endblock %}

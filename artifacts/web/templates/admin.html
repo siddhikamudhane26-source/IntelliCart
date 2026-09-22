@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block title %}Analytics | IntelliCart{% endblock %}
+{% block head %}<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>{% endblock %}
+{% block content %}
+<section class="admin-header"><div class="container admin-header-inner"><div><p class="eyebrow">IntelliCart intelligence</p><h1>Good morning, {{ current_user['name'].split()[0] }}.</h1><p>A clear view of the signals behind your store.</p></div><div class="admin-header-actions"><span class="live-label"><span></span> Live data</span><a class="button button-light" href="{{ url_for('products') }}">View storefront <i class="bi bi-arrow-up-right"></i></a></div></div></section>
+<section class="section container admin-section">
+  <div class="admin-stat-grid">
+    <article class="admin-stat-card admin-stat-primary"><span>Total revenue <i class="bi bi-arrow-up-right"></i></span><strong>₹{{ "{:,.0f}".format(stats['revenue']) }}</strong><small><b>+18.4%</b> vs last period</small></article>
+    <article class="admin-stat-card"><span>Total orders <i class="bi bi-bag"></i></span><strong>{{ "{:,}".format(stats['orders']) }}</strong><small><b>+12.8%</b> this month</small></article>
+    <article class="admin-stat-card"><span>Customers <i class="bi bi-people"></i></span><strong>{{ "{:,}".format(stats['customers']) }}</strong><small><b>+8.6%</b> new customers</small></article>
+    <article class="admin-stat-card"><span>Avg order value <i class="bi bi-receipt"></i></span><strong>₹{{ "{:,.0f}".format(stats['average_order_value']) }}</strong><small><b>+6.2%</b> from last month</small></article>
+  </div>
+  <div class="dashboard-grid">
+    <article class="dashboard-card sales-chart-card"><div class="dashboard-card-head"><div><p class="eyebrow">Performance</p><h2>Monthly sales</h2></div><span class="chart-legend"><i></i> Revenue</span></div><div class="chart-wrap"><canvas id="salesChart"></canvas></div></article>
+    <article class="dashboard-card category-chart-card"><div class="dashboard-card-head"><div><p class="eyebrow">Mix</p><h2>Sales by category</h2></div></div><div class="donut-wrap"><canvas id="categoryChart"></canvas><div class="donut-center"><strong>{{ category_sales|length }}</strong><span>categories</span></div></div></article>
+  </div>
+  <div class="dashboard-grid lower-grid">
+    <article class="dashboard-card"><div class="dashboard-card-head"><div><p class="eyebrow">Merchandising</p><h2>Top products</h2></div><a class="text-link" href="{{ url_for('products') }}">View catalog <i class="bi bi-arrow-up-right"></i></a></div><div class="mini-table">{% for product in top_products[:6] %}<div class="mini-table-row"><span class="rank">{{ "%02d"|format(loop.index) }}</span><span class="table-product"><b>{{ product['name'] }}</b><small>{{ product['category'] }}</small></span><span>{{ product['units_sold'] }} sold</span><strong>₹{{ "{:,.0f}".format(product['revenue']) }}</strong></div>{% endfor %}</div></article>
+    <article class="dashboard-card"><div class="dashboard-card-head"><div><p class="eyebrow">Customer intelligence</p><h2>RFM segments</h2></div><span class="ai-tag"><i class="bi bi-stars"></i> K-Means</span></div><div class="segment-list">{% set segment_counts = {} %}{% for segment in segments %}{% if segment_counts.update({segment.segment: segment_counts.get(segment.segment, 0) + 1}) %}{% endif %}{% endfor %}{% for name, count in segment_counts.items() %}<div class="segment-row"><span class="segment-dot segment-dot-{{ loop.index }}"></span><span>{{ name }}</span><strong>{{ count }}</strong><small>customers</small></div>{% endfor %}</div></article>
+  </div>
+  <div class="dashboard-grid lower-grid">
+    <article class="dashboard-card"><div class="dashboard-card-head"><div><p class="eyebrow">Latest activity</p><h2>Recent orders</h2></div><a class="text-link" href="{{ url_for('orders') }}">All orders <i class="bi bi-arrow-up-right"></i></a></div><div class="mini-table">{% for order in recent_orders %}<div class="mini-table-row"><span class="order-symbol"><i class="bi bi-bag"></i></span><span class="table-product"><b>#IC-{{ "%04d"|format(order['id']) }} · {{ order['customer_name'] }}</b><small>{{ order['created_at'][:10] }}</small></span><strong>₹{{ "{:,.0f}".format(order['total_amount']) }}</strong><span class="status-badge status-{{ order['status'] }}">{{ order['status'] }}</span></div>{% endfor %}</div></article>
+    <article class="dashboard-card"><div class="dashboard-card-head"><div><p class="eyebrow">Needs attention</p><h2>Low stock</h2></div><span class="warning-tag"><i class="bi bi-exclamation-triangle"></i> {{ low_stock|length }} items</span></div><div class="mini-table">{% for product in low_stock[:6] %}<div class="mini-table-row"><span class="table-product"><b>{{ product['name'] }}</b><small>{{ product['category_name'] }}</small></span><strong class="stock-warning">{{ product['stock'] }} left</strong><a class="small-action" href="{{ url_for('product_detail', product_id=product['id']) }}"><i class="bi bi-arrow-up-right"></i></a></div>{% endfor %}</div></article>
+  </div>
+</section>
+{% endblock %}
+{% block scripts %}
+<script>
+  const salesData = {{ monthly_sales|map(attribute='revenue')|list|tojson }};
+  const salesLabels = {{ monthly_sales|map(attribute='month')|list|tojson }};
+  const categoryData = {{ category_sales|map(attribute='revenue')|list|tojson }};
+  const categoryLabels = {{ category_sales|map(attribute='category')|list|tojson }};
+  const chartFont = { family: 'Manrope', size: 11 };
+  new Chart(document.getElementById('salesChart'), {
+    type: 'line',
+    data: { labels: salesLabels, datasets: [{ data: salesData, borderColor: '#7d6bff', backgroundColor: 'rgba(125,107,255,.13)', fill: true, tension: .42, pointRadius: 3, pointBackgroundColor: '#c5f36a', borderWidth: 2 }] },
+    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { grid: { display: false }, ticks: { color: '#8994a8', font: chartFont } }, y: { grid: { color: 'rgba(31,43,68,.08)' }, ticks: { color: '#8994a8', font: chartFont, callback: value => '₹' + (value / 1000).toFixed(0) + 'k' } } } }
+  });
+  new Chart(document.getElementById('categoryChart'), {
+    type: 'doughnut',
+    data: { labels: categoryLabels, datasets: [{ data: categoryData, backgroundColor: ['#7d6bff','#42d6d0','#c5f36a','#ffae6b','#f477b8','#5a8dff','#9e9ce8','#62c2a8','#e4d35e','#a7b4c9'], borderWidth: 0 }] },
+    options: { responsive: true, maintainAspectRatio: false, cutout: '72%', plugins: { legend: { position: 'bottom', labels: { color: '#8994a8', font: chartFont, boxWidth: 8, usePointStyle: true, padding: 12 } } } }
+  });
+</script>
+{% endblock %}
