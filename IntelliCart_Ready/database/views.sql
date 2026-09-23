@@ -1,0 +1,2 @@
+CREATE VIEW IF NOT EXISTS customer_sales AS SELECT u.id customer_id,u.name,u.email,u.segment,COUNT(o.id) total_orders,COALESCE(SUM(o.total),0) total_spend FROM users u LEFT JOIN orders o ON u.id=o.user_id GROUP BY u.id;
+CREATE VIEW IF NOT EXISTS product_sales AS SELECT p.id product_id,p.name,p.category,COALESCE(SUM(oi.quantity),0) units_sold,COALESCE(SUM(oi.quantity*oi.price),0) revenue FROM products p LEFT JOIN order_items oi ON p.id=oi.product_id GROUP BY p.id;
