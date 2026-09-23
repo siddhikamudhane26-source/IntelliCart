@@ -1,0 +1,1 @@
+{% extends 'base.html' %}{% block title %}AI Recommendations{% endblock %}{% block content %}<h1>🤖 AI Picks for {{user.name}}</h1><p class="muted">Recommendations are based on product popularity, ratings and customer context.</p><div class="grid">{% for p in products %}{% include 'product_card.html' %}{% endfor %}</div>{% endblock %}
